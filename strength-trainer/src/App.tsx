@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Play, Pause, Square, SkipForward, SkipBack, Dumbbell, Plus, Minus, Trophy } from 'lucide-react';
 
 const EXERCISES = [
@@ -51,11 +51,13 @@ export default function StrengthTrainingApp() {
   const [pauseType, setPauseType] = useState(null);
   const [pauseTimer, setPauseTimer] = useState(0);
   
-  const audioContextRef = useRef(null);
-  const canvasRef = useRef(null);
+  const audioContextRef = useRef<AudioContext | null>(null);
+  const canvasRef = useRef<HTMLCanvasElement | null>(null);
+
 
   useEffect(() => {
-    audioContextRef.current = new (window.AudioContext || window.webkitAudioContext)();
+    const AudioContextClass = window.AudioContext || (window as any).webkitAudioContext;
+    audioContextRef.current = new AudioContextClass();
     return () => {
       if (audioContextRef.current) {
         audioContextRef.current.close();
@@ -63,7 +65,8 @@ export default function StrengthTrainingApp() {
     };
   }, []);
 
-  const playTone = (frequency, duration = 0.08, volume = 0.12) => {
+
+  const playTone = (frequency: number, duration: number = 0.08, volume: number = 0.12) => {
     const ctx = audioContextRef.current;
     if (!ctx) return;
 
